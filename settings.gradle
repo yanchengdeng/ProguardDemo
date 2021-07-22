@@ -1,0 +1,5 @@
+rootProject.name = "TestProguard"
+include ':app'
+include ':ui'
+include ':service'
+include ':common'

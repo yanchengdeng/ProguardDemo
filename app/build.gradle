@@ -1,0 +1,107 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+}
+
+android {
+    signingConfigs {
+        debug {
+            storeFile file('D:\\android_project\\TestProguard\\app\\miaopai.jks')
+            storePassword '123456'
+            keyPassword '123456'
+            keyAlias 'miaopai'
+        }
+    }
+    compileSdkVersion 30
+
+    defaultConfig {
+        applicationId "com.dadadata.testproguard"
+        minSdkVersion 26
+        targetSdkVersion 30
+        versionCode 100
+        versionName "1.0.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+
+    }
+
+    buildTypes {
+
+
+        debug {
+            minifyEnabled false
+            buildConfigField "String", "ENV", '"debug"'
+            buildConfigField "boolean", "DEBUG_MODE", "true"
+            buildConfigField "String", "HOST_URL", '"http://test.miaoxp.com"'
+            signingConfig signingConfigs.debug
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+        dev.initWith(debug)
+        dev {
+            buildConfigField "String", "ENV", '"dev"'
+            buildConfigField "String", "HOST_URL", '"http://dev.miaoxp.com"'
+            signingConfig signingConfigs.debug
+        }
+
+        release {
+            minifyEnabled false
+            buildConfigField "String", "ENV", '"release"'
+            buildConfigField "boolean", "DEBUG_MODE", "false"
+            buildConfigField "String", "HOST_URL", '"http://miaoxp.com"'
+            signingConfig signingConfigs.debug
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+        }
+
+        pre.initWith(release)
+        pre {
+            buildConfigField "String", "ENV", '"pre"'
+            buildConfigField "boolean", "DEBUG_MODE", "true"
+            signingConfig signingConfigs.debug
+        }
+
+
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    buildFeatures {
+        viewBinding true
+    }
+
+    //打包命令：gradle assembleRelease
+    //全部打包 ： gradle  assemble
+    android.applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "progard-${variant.name}-${variant.versionCode}".toLowerCase()
+            outputFileName = outputFileName.replaceAll("\"", "")
+            outputFileName = outputFileName + ".apk"
+        }
+    }
+}
+
+dependencies {
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'androidx.core:core-ktx:1.6.0'
+    implementation 'androidx.appcompat:appcompat:1.3.0'
+    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation project(path: ':service')
+    implementation project(path: ':ui')
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.0'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.3.0'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
+    implementation 'org.greenrobot:eventbus:3.2.0'
+
+}
